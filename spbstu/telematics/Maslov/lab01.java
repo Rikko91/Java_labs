@@ -17,11 +17,11 @@ public class lab01 {
        long number;
         if(args.length > 0 ) {
            number=Long.parseLong(args[0]);
-            System.out.println(" Входное число - " + number);
-	System.out.println("Результат  - " + step(number) + ";");
+            System.out.println(" Р’xРѕРґРЅРѕРµ С‡РёСЃР»Рѕ - " + number);
+	System.out.println("Р РµР·СѓР»СЊС‚Р°С‚ - " + step(number) + ";");
       } 
         else {
-            System.out.println("Вы не задали входное число");
+            System.out.println("Р’С‹ РЅРµ Р·Р°РґР°Р»Рё РІС…РѕРґРЅРѕРµ С‡РёСЃР»Рѕ");
 		}  
 	}      
     }
