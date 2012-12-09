@@ -16,7 +16,7 @@ public class Vector<T> implements IVector<T>, Iterable <T> {
 	
 
 	public Vector() {
-		System.out.println("Создан новый объект");
+		System.out.println("РЎРѕР·РґР°РЅ РЅРѕРІС‹Р№ РѕР±СЉРµРєС‚");
 		this.array =(T[])new Object[15];
 		this.CountObjectInArray=0;
 	}
@@ -50,7 +50,7 @@ public class Vector<T> implements IVector<T>, Iterable <T> {
 			}
 		}
 		else {
-			System.out.println("Плохой индекс");
+			System.out.println("РџР»РѕС…РѕР№ РёРЅРґРµРєСЃ");
 		}
 	}
 
@@ -80,7 +80,7 @@ public class Vector<T> implements IVector<T>, Iterable <T> {
 		if(index < CountObjectInArray ) {
 			return  array[index];
 		}
-		System.out.println("Индекс неверный");
+		System.out.println("РРЅРґРµРєСЃ РЅРµРІРµСЂРЅС‹Р№");
 		return null;
 	}
 	
@@ -96,7 +96,7 @@ public class Vector<T> implements IVector<T>, Iterable <T> {
 	
 	public void remove(int index) {
 		if ( index >= array.length || index < 0 ) 
-			System.out.println("Такого индекса не существует");
+			System.out.println("РўР°РєРѕРіРѕ РёРЅРґРµРєСЃР° РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
 		else {
 			CountObjectInArray--;
 			T [] new_array=(T[])new Object[array.length-1];
@@ -107,7 +107,7 @@ public class Vector<T> implements IVector<T>, Iterable <T> {
 				new_array[i]=array[i+1];
 				
 			}
-			//надо уменьшить размерность array на 1 
+			//РЅР°РґРѕ СѓРјРµРЅСЊС€РёС‚СЊ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ array РЅР° 1 
 			array  = (T[])new Object[array.length-1];
 			for (int i=0;i<array.length;i++) {
 				array[i]=new_array[i];
@@ -126,7 +126,7 @@ public class Vector<T> implements IVector<T>, Iterable <T> {
 			System.out.println("[" + i + "] - " + array[i]);
 			
 		}
-		System.out.println("Количество элементов в массиве - " + CountObjectInArray);
+		System.out.println("РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РІ РјР°СЃСЃРёРІРµ - " + CountObjectInArray);
 	}
 
 	public Iterator <T> iterator() {
