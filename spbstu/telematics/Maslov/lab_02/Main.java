@@ -17,7 +17,7 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Vector<Integer> MyVect=new Vector<Integer>();
-		//добавим 15 элементов
+		//РґРѕР±Р°РІРёРј 15 СЌР»РµРјРµРЅС‚РѕРІ
 		MyVect.add(20);
 		MyVect.add(5);
 		MyVect.add(8);
@@ -33,23 +33,23 @@ public class Main {
 		MyVect.add(65);
 		MyVect.add(54);
 		MyVect.add(32);
-		//добавим еще, чтобы проверить метод increase_size_array
+		//РґРѕР±Р°РІРёРј РµС‰Рµ, С‡С‚РѕР±С‹ РїСЂРѕРІРµСЂРёС‚СЊ РјРµС‚РѕРґ increase_size_array
 		MyVect.add(21);
 		MyVect.add(15);
 		MyVect.print();
-		//проверка метода add на определенную позицию
-		System.out.println("Добавим число 777 на позицию 11");
+		//РїСЂРѕРІРµСЂРєР° РјРµС‚РѕРґР° add РЅР° РѕРїСЂРµРґРµР»РµРЅРЅСѓСЋ РїРѕР·РёС†РёСЋ
+		System.out.println("Р”РѕР±Р°РІРёРј С‡РёСЃР»Рѕ 777 РЅР° РїРѕР·РёС†РёСЋ 11");
 		MyVect.add(777, 11);
 		MyVect.print();
-		//проверка метода remove 
-		System.out.println("Удалим объект, находящийся на позиции номер 13");
+		//РїСЂРѕРІРµСЂРєР° РјРµС‚РѕРґР° remove 
+		System.out.println("РЈРґР°Р»РёРј РѕР±СЉРµРєС‚, РЅР°С…РѕРґСЏС‰РёР№СЃСЏ РЅР° РїРѕР·РёС†РёРё РЅРѕРјРµСЂ 13");
 		MyVect.remove(13);
 		MyVect.print();
-		//проверка метода get
-		System.out.println("Возвратим объект на позиции номер 7");
+		//РїСЂРѕРІРµСЂРєР° РјРµС‚РѕРґР° get
+		System.out.println("Р’РѕР·РІСЂР°С‚РёРј РѕР±СЉРµРєС‚ РЅР° РїРѕР·РёС†РёРё РЅРѕРјРµСЂ 7");
 		System.out.println(MyVect.get(7));
-		//проверка метода IndexOf
-		System.out.println("Возвратим индекс объекта  777 ");
+		//РїСЂРѕРІРµСЂРєР° РјРµС‚РѕРґР° IndexOf
+		System.out.println("Р’РѕР·РІСЂР°С‚РёРј РёРЅРґРµРєСЃ РѕР±СЉРµРєС‚Р°  777 ");
 		System.out.println(MyVect.IndexOf(777));
 		
 	}
