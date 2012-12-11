@@ -58,7 +58,7 @@ public class Main {
 			v.add(new Random().nextInt());
 		}
 		v.print();		
-		System.out.println("Итератор!!");
+		System.out.println("РС‚РµСЂР°С‚РѕСЂ!");
 		for (Integer i : v) {
 			System.out.println(i);
 		}
