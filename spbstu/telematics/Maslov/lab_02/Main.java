@@ -1,4 +1,5 @@
 import java.util.Iterator;
+import java.util.Random;
 
 
 /**
@@ -51,7 +52,16 @@ public class Main {
 		//проверка метода IndexOf
 		System.out.println("Возвратим индекс объекта  777 ");
 		System.out.println(MyVect.IndexOf(777));
-		
+	
+		Vector<Integer> v=new Vector<Integer>();
+		for (int i=0;i < 40; i++) {
+			v.add(new Random().nextInt());
+		}
+		v.print();		
+		System.out.println("��������!!");
+		for (Integer i : v) {
+			System.out.println(i);
+		}
 	}
 
 }

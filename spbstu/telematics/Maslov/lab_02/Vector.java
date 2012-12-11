@@ -56,12 +56,12 @@ public class Vector<T> implements IVector<T>, Iterable <T> {
 
 	public void increase_array_size() {
 		//T new_array []=new T[CountObjectInArray*2];
-		T [] new_array=(T[])new Object[array.length+5];
+		T [] new_array=(T[])new Object[array.length+15];
 		
 		for (int i=0;i<array.length;i++) {
 			new_array[i]=array[i];		
 		}
-		array  = (T[])new Object[array.length+5];
+		array  = (T[])new Object[array.length+15];
 		for (int i=0;i<array.length;i++) {
 			array[i]=new_array[i];
 		}
