@@ -4,7 +4,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Controller implements Runnable {
-	public boolean flag_of_entrance; // открыт вход или выход
+	public boolean flag_of_entrance; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	public Director director;
 	public Lock controllerLock;
 	public Condition controllerFunds;
@@ -20,15 +20,14 @@ public class Controller implements Runnable {
 	public void test () {
 		controllerLock.lock();
 		try {
-			if (director.State == MuseumState.Open) {//если музей открыт
-				flag_of_entrance=true; //контроллер разрешает пускать людей
-				System.out.println("Музей открыт - можно пускать людей");
+			if (director.State == MuseumState.Open) {//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+				flag_of_entrance=true; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+				System.out.println("РњСѓР·РµР№ РѕС‚РєС‹С‚ - РјРѕР¶РЅРѕ РїСѓСЃРєР°С‚СЊ Р»СЋРґРµР№");
 			}
 			else
-				{// в другом случае разрешает только уходить людям
+				{// пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 				flag_of_entrance=false;
-				System.out.println("Музей закрыт - нельзя пускать людей");
-				}
+				System.out.println("РњСѓР·РµР№ Р·Р°РєСЂС‚С‹ - Р»СЋРґРµР№ РїСѓСЃРєР°С‚СЊ РЅРµР»СЊР·СЏ");				}
 		}
 		finally 
 		{
