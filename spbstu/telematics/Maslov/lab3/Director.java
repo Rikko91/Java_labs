@@ -42,12 +42,12 @@ public class Director implements Runnable{
 			if (number == 1) 
 			{   
 				State = MuseumState.Open;
-				System.out.println("Музей открыт");
+				System.out.println("РњСѓР·РµР№ РѕС‚РєСЂС‹С‚");
 			}
 			else
 			{
 				State = MuseumState.Close;
-				System.out.println("Музей закрыт");
+				System.out.println("РњСѓР·РµР№ Р·Р°РєСЂС‚С‹");
 			}
 		
 			directorFunds.signalAll();
