@@ -4,34 +4,60 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Controller implements Runnable {
-	public boolean flag_of_entrance; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+	private boolean flag_of_entrance; 
+	private boolean event = false;
 	public Director director;
-	public Lock controllerLock;
-	public Condition controllerFunds;
+	public PassEast museum;
+	public PassWest museum2;
+	public MuseumState st;
 	
 	
-	public Controller(Director director_) {
+	public Controller(Director director_, PassEast museum_, PassWest museum2_) {
 		director=director_;
-		controllerLock = new ReentrantLock();
-		controllerFunds=controllerLock.newCondition();
+		museum = museum_;
+		museum2 = museum2_;
 	}
 	
 	
+	public boolean isEvent() {
+		return event;
+	}
+
+
+	public void setEvent(boolean event) {
+		this.event = event;
+	}
+
+
+	public boolean isFlag_of_entrance() {
+		return flag_of_entrance;
+	}
+
+
 	public void test () {
-		controllerLock.lock();
+		director.getDirectorLock().lock();
 		try {
-			if (director.State == MuseumState.Open) {//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-				flag_of_entrance=true; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-				System.out.println("РњСѓР·РµР№ РѕС‚РєС‹С‚ - РјРѕР¶РЅРѕ РїСѓСЃРєР°С‚СЊ Р»СЋРґРµР№");
+			
+			if (director.getState() == MuseumState.Open) {//если музей открыт
+				flag_of_entrance=true; //контроллер разрешает пускать людей и выпускать людей 
+				museum.setOpengate(true);
+				
+				if ( st != director.getState() ) 
+				System.out.println("Контроллер открыл турникет");
+				st = director.getState();
 			}
 			else
-				{// пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+				{// в другом случае разрешает только уходить людям
 				flag_of_entrance=false;
-				System.out.println("РњСѓР·РµР№ Р·Р°РєСЂС‚С‹ - Р»СЋРґРµР№ РїСѓСЃРєР°С‚СЊ РЅРµР»СЊР·СЏ");				}
+				if ( st != director.getState() ) 
+				System.out.println("Контроллер закрыл турникет");
+				st = director.getState();
+				}
+			director.getDirectorFunds().signalAll();
 		}
 		finally 
 		{
-			controllerLock.unlock();
+			director.getDirectorLock().unlock();
 		}
 	}
 
@@ -40,28 +66,23 @@ public class Controller implements Runnable {
 		// TODO Auto-generated method stub
 		while (true) 
 		{
-			//System.out.println("POKA");
-			controllerLock.lock();
+			
+			director.getDirectorLock().lock();
 			try {
 				try {
-					director.directorFunds.await();
-				} catch (InterruptedException e1) {
+					director.getDirectorFunds().await();
+				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e.printStackTrace();
 				}
+				if (event == true)
+				test();
+				event = false;
+			}
+			finally {
+				director.getDirectorLock().unlock();
+			}
 			
-				System.out.println("Privet");
-			}
-			finally 
-			{
-				controllerLock.unlock();
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 	
