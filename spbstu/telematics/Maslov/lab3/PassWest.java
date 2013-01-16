@@ -1,50 +1,59 @@
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 
 
 public class PassWest implements Runnable {
 	private int people_in_museum;
 	private boolean takeOutvisitors = false;
-	public Director director; // дирекnjh
-	public Controller controller; //контроллер
+	public Director director; // пїЅпїЅпїЅпїЅпїЅnjh
+	public Controller controller; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	public Visitors visitors;
 	public PassEast museum;
+	public Lock takeOutvisitorsLock; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ takeOutvisitors
+
 	
 	
 
 	public void setTakeOutvisitors(boolean takeOutvisitors) {
-		this.takeOutvisitors = takeOutvisitors;
+		takeOutvisitorsLock.lock();
+		try {
+			this.takeOutvisitors = takeOutvisitors;
+		}
+		finally {
+			takeOutvisitorsLock.unlock();
+		}
 	}
 
 
 	public PassWest ( Visitors visitors_, Director director_,int input, PassEast museum) {
-	director = director_;
-	visitors = visitors_;
-	people_in_museum=input;
-	this.museum = museum;
+		director = director_;
+		visitors = visitors_;
+		people_in_museum=input;
+		this.museum = museum;
+		takeOutvisitorsLock = new ReentrantLock();			
 	}
 	
 	
 	
-	public void takeOutVisitors () throws InterruptedException {	// убираем посетителей из музея
-		director.getDirectorLock().lock();
-		try {
-			//if (permitPeople() == false || permitPeople() == true  )
-			//{
-				//System.out.println("Музей закрыт - турникет West работает");
+	public void takeOutVisitors () throws InterruptedException {	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+		//director.getDirectorLock().lock();
+	//	try {
 				people_in_museum = visitors.getCountOutVisitorsToMuseum();
 				
 				while (people_in_museum != 0 ) {
 					people_in_museum--;
 					
 				}
-				System.out.println("Через WEST вышло - " + visitors.getCountOutVisitorsToMuseum() + " людей, осталось " + ( museum.getInputPeople() - visitors.getCountOutVisitorsToMuseum()) ) ;				
+				System.out.println("Р§РµСЂРµР· WEST РІС‹С€Р»Рѕ - " + visitors.getCountOutVisitorsToMuseum() + " Р»СЋРґРµР№, РѕСЃС‚Р°Р»РѕСЃСЊ " + ( museum.getInputPeople() - visitors.getCountOutVisitorsToMuseum()) ) ;				
 				int count = museum.getInputPeople() - visitors.getCountOutVisitorsToMuseum();
 				museum.setPeople_in_museum(count); 
-			//}
-		}
-		finally {
-			director.getDirectorLock().unlock();
-		}
+	//	}
+		//finally {
+		//	director.getDirectorLock().unlock();
+		//}
 	}
 	
 
@@ -55,29 +64,28 @@ public class PassWest implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		while (true) {
-			director.getDirectorLock().lock();
+		while (true) {	
+			visitors.visitorsOutLock.lock();
 			try {
 				try {
-					director.getDirectorFunds().await();
+					visitors.visitorsOutFunds.await();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (takeOutvisitors == true) {
-					try {
-						takeOutVisitors();
-						takeOutvisitors = false;
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				
+				try {
+					if (museum.getInputPeople() != 0)
+					takeOutVisitors();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			
+				
 				
 			}
 			finally {
-				director.getDirectorLock().unlock();
+				visitors.visitorsOutLock.unlock();
 			}
 			
 		}

@@ -13,6 +13,8 @@ public class Director implements Runnable{
 	public Lock directorLock;
 	public Condition directorFunds;
 	public Controller controller;
+	public Lock stateLock;
+	public Condition stateFunds;
 	int count = 0;
 	
 	public Director (MuseumState State) {
@@ -20,56 +22,48 @@ public class Director implements Runnable{
 		this.State = State;
 		directorLock = new ReentrantLock();
 		directorFunds = directorLock.newCondition();
+		stateLock = new ReentrantLock();
+		stateFunds = stateLock.newCondition();
 		
 	}
 	
 	
-	public Lock getDirectorLock() {
-		return directorLock;
-	}
-
-
-
-
-	public Condition getDirectorFunds() {
-		return directorFunds;
-	}
-
 	public MuseumState getState() {
-		return State;
+		stateLock.lock();
+		try {
+			return State;
+		}
+		finally {
+			stateLock.unlock();
+		}
 	}
 	
-	public void setState(MuseumState state) {
-		State = state;
-	}
 
 
 	public void RandomState (MuseumState value) {	
 		int number = new Random().nextInt(2) + 1;
-	//	System.out.println("Number = " + number + " count = " + count);
+	
 		
-		directorLock.lock();
-		try 
-		{
+		stateLock.lock(); 
+		try {
 			if (number == 2 ) 
 			{   
 				State = MuseumState.Open;
-				System.out.println("Музей открыт");
+				System.out.println("РњСѓР·РµР№ РѕС‚РєСЂС‹С‚");
 				controller.setEvent(true);
 			}
 			else
 			{
 				State = MuseumState.Close;
-				System.out.println("Музей закрыт");
+				System.out.println("РњСѓР·РµР№ Р·Р°РєСЂС‹С‚");
 				controller.setEvent(true);
 			}
-		
-			directorFunds.signalAll();
+			stateFunds.signalAll();
+	
 			count++;
 		}
-		finally 
-		{
-			directorLock.unlock();
+		finally {
+			stateLock.unlock();
 		}
 	}
 

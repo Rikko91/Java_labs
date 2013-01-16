@@ -11,55 +11,88 @@ public class Visitors implements Runnable {
 	public PassEast museum;
 	public PassWest museum2;
 	public Director director;
-
+	public Lock visitorsLock; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ countVisitrosToMuseum
+	public Lock visitorsOutLock; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ countOutVisitors
+	public Condition visitorsOutFunds;
 	
 	public Visitors (int countVisitorsToMuseum) {
 		this.countVisitorsToMuseum=countVisitorsToMuseum;
+		visitorsLock = new ReentrantLock();
+		visitorsOutLock = new ReentrantLock();
+		visitorsOutFunds = visitorsOutLock.newCondition();
 	}
 	
 	public int getCountVisitorsToMuseum() {
-		return countVisitorsToMuseum;
+		visitorsLock.lock();
+		try {
+			return countVisitorsToMuseum;
+		}
+		finally {
+			visitorsLock.unlock();
+		}
 	}
 
 	public int getCountOutVisitorsToMuseum() {
-		return countOutVisitorsToMuseum;
+		visitorsOutLock.lock();
+		try {
+			return countOutVisitorsToMuseum;
+		}
+		finally {
+			visitorsOutLock.unlock();
+		}
 	}
 
 	public void setCountVisitorsToMuseum(int countVisitorsToMuseum) {
-		this.countVisitorsToMuseum = countVisitorsToMuseum;
+		visitorsLock.lock();
+		try {
+			this.countVisitorsToMuseum = countVisitorsToMuseum;
+		}
+		finally {
+			visitorsLock.unlock();
+		}
 	}
 
 	public void setCountOutVisitorsToMuseum(int countOutVisitorsToMuseum) {
-		this.countOutVisitorsToMuseum = countOutVisitorsToMuseum;
+		visitorsOutLock.lock();
+		try {
+			this.countOutVisitorsToMuseum = countOutVisitorsToMuseum;
+		}
+		finally {
+			visitorsOutLock.unlock();
+		}
 	}
 
 	public void generateVisitors()  {
-		director.getDirectorLock().lock();
+		visitorsLock.lock();
 		try 
 		{
-			countVisitorsToMuseum = new Random().nextInt(30) + 1;
-			System.out.println("Пришли посетители - " + countVisitorsToMuseum + " людей.");
+			countVisitorsToMuseum = new Random().nextInt(45) + 1;
+			System.out.println("РџСЂРёС€Р»Рё РїРѕСЃРµС‚РёС‚РµР»Рё - " + countVisitorsToMuseum + " Р»СЋРґРµР№.");
 			museum.setFlagOfTakeVisitors(true);
-			director.getDirectorFunds().signalAll();
+			//visitorsFunds.signalAll();
 		}
 		finally 
 		{
-			director.getDirectorLock().unlock();
+			visitorsLock.unlock();
 		}
 	}
 	
 	public void generateOutVisitors () {
-		director.getDirectorLock().lock();
+		visitorsOutLock.lock();
 		try { 
-			if ( museum.getInputPeople() > 1 ) {
-				//System.out.println(" - " + museum.getInputPeople() );
+			if ( museum.getInputPeople() > 5 ) {
 			countOutVisitorsToMuseum = new Random().nextInt(museum.getInputPeople() / 3) +1;
 			museum2.setTakeOutvisitors(true);
 			}
-			
+			if (museum.getInputPeople() > 0 && museum.getInputPeople() < 5) {
+				countOutVisitorsToMuseum = 1;
+				museum2.setTakeOutvisitors(true);
+			}
+				
+			visitorsOutFunds.signalAll();
 		}
 		finally {
-			director.getDirectorLock().unlock();
+			visitorsOutLock.unlock();
 		}
 	}
 	@Override
@@ -74,6 +107,7 @@ public class Visitors implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			generateOutVisitors();
 			try {
 				Thread.sleep(1000);

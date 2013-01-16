@@ -10,54 +10,92 @@ public class Controller implements Runnable {
 	public PassEast museum;
 	public PassWest museum2;
 	public MuseumState st;
+	public Lock ControllerFlagLock; //РґР»СЏ РєРѕРЅС‚СЂРѕР»Р»РµСЂС„Р»Р°РіР°
+	public Condition ControllerFlagFunds;
+	public Lock eventLock; // Р±Р»РѕРєРёСЂРѕРІРєР° РґР»СЏ event
 	
 	
 	public Controller(Director director_, PassEast museum_, PassWest museum2_) {
 		director=director_;
 		museum = museum_;
 		museum2 = museum2_;
+		ControllerFlagLock = new ReentrantLock();
+		ControllerFlagFunds = ControllerFlagLock.newCondition();
+		eventLock = new ReentrantLock();
+		
 	}
 	
 	
 	public boolean isEvent() {
-		return event;
+		eventLock.lock();
+		try {
+			return event;
+		}
+		finally {
+			eventLock.unlock();
+		}
 	}
 
 
 	public void setEvent(boolean event) {
-		this.event = event;
+		eventLock.lock();
+		try {
+			this.event = event;
+		}
+		finally {
+			eventLock.unlock();
+		}
 	}
 
+	public boolean whoIsEvent () {
+		eventLock.lock();
+		try {
+			if (event == true) {
+				return true;
+			}
+			return false;	
+		}
+		finally {
+			eventLock.unlock();
+		}
+	}
+	
 
 	public boolean isFlag_of_entrance() {
-		return flag_of_entrance;
+		ControllerFlagLock.lock();
+		try {
+			return flag_of_entrance;
+		}
+		finally {
+			ControllerFlagLock.unlock();
+		}
 	}
 
-
+	
 	public void test () {
-		director.getDirectorLock().lock();
+		ControllerFlagLock.lock();
 		try {
 			
-			if (director.getState() == MuseumState.Open) {//если музей открыт
-				flag_of_entrance=true; //контроллер разрешает пускать людей и выпускать людей 
+			if (director.getState() == MuseumState.Open) {//РµСЃР»Рё РјСѓР·РµР№ РѕС‚РєСЂС‹С‚
+				flag_of_entrance=true; //РєРѕРЅС‚СЂРѕР»Р»РµСЂ СЂР°Р·СЂРµС€Р°РµС‚ РїСѓСЃРєР°С‚СЊ Р»СЋРґРµР№ Рё РІС‹РїСѓСЃРєР°С‚СЊ Р»СЋРґРµР№ 
 				museum.setOpengate(true);
 				
 				if ( st != director.getState() ) 
-				System.out.println("Контроллер открыл турникет");
+				System.out.println("РљРѕРЅС‚СЂРѕР»Р»РµСЂ РѕС‚РєСЂС‹Р» С‚СѓСЂРЅРёРєРµС‚");
 				st = director.getState();
 			}
 			else
-				{// в другом случае разрешает только уходить людям
+				{// РІ РґСЂСѓРіРѕРј СЃР»СѓС‡Р°Рµ СЂР°Р·СЂРµС€Р°РµС‚ С‚РѕР»СЊРєРѕ СѓС…РѕРґРёС‚СЊ Р»СЋРґСЏРј
 				flag_of_entrance=false;
 				if ( st != director.getState() ) 
-				System.out.println("Контроллер закрыл турникет");
+				System.out.println("РљРѕРЅС‚СЂРѕР»Р»РµСЂ Р·Р°РєСЂС‹Р» С‚СѓСЂРЅРёРєРµС‚");
 				st = director.getState();
 				}
-			director.getDirectorFunds().signalAll();
+			ControllerFlagFunds.signalAll();
 		}
 		finally 
 		{
-			director.getDirectorLock().unlock();
+			ControllerFlagLock.unlock();
 		}
 	}
 
@@ -65,22 +103,19 @@ public class Controller implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		while (true) 
-		{
-			
-			director.getDirectorLock().lock();
+		{	
+			director.stateLock.lock();
 			try {
 				try {
-					director.getDirectorFunds().await();
+					director.stateFunds.await();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (event == true)
-				test();
-				event = false;
+				test();		
 			}
 			finally {
-				director.getDirectorLock().unlock();
+				director.stateLock.unlock();
 			}
 			
 		}

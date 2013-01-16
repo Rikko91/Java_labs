@@ -12,89 +12,146 @@ public class PassEast implements Runnable {
 	public Controller controller; 
 	public Visitors visitors;
 	public boolean entrance; 
-	
-	
+	public Lock flagOfTakeVisitorsLock; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ flagoftakevisitors
+	public Lock peopleInMuseumLock; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ people_in_museum
+	public Lock opengateLock;
 	
 	public PassEast ( Visitors visitors_, Director director_,int input) {
 	director = director_;
 	visitors = visitors_;
 	people_in_museum=input;
+	flagOfTakeVisitorsLock = new ReentrantLock();
+	peopleInMuseumLock = new ReentrantLock();
+	opengateLock = new ReentrantLock();
 	}
 		
 	public  int getInputPeople() {
-		return people_in_museum;
+		peopleInMuseumLock.lock();
+		try {
+			return people_in_museum;
+		}
+		finally {
+			peopleInMuseumLock.unlock();
+		}
 	}
 	
 
 	public void setPeople_in_museum(int people_in_museum) {
-		this.people_in_museum = people_in_museum;
+		peopleInMuseumLock.lock();
+		try {
+			this.people_in_museum = people_in_museum;
+		}
+		finally {
+			peopleInMuseumLock.unlock();
+		}
 	}
 
 	public  void setFlagOfTakeVisitors(boolean flagOfTakeVisitors) {
-		this.flagOfTakeVisitors = flagOfTakeVisitors;
+		flagOfTakeVisitorsLock.lock();
+		try {
+			this.flagOfTakeVisitors = flagOfTakeVisitors;
+		}
+		finally {
+			flagOfTakeVisitorsLock.unlock();
+		}
 	}
 
 	public boolean isFlagOfTakeVisitors() {
-		return flagOfTakeVisitors;
+		flagOfTakeVisitorsLock.lock();
+		try {
+			return flagOfTakeVisitors;
+		}
+		finally {
+			flagOfTakeVisitorsLock.unlock();
+		}
+	}
+	public boolean WhoIsFlagOfTakeVisitors () {
+		flagOfTakeVisitorsLock.lock();
+		try {
+			if ( flagOfTakeVisitors == true ) {
+				return true;
+			}
+			return false;
+		}
+		finally {
+			flagOfTakeVisitorsLock.unlock();
+		}
 	}
 
 	public void setOpengate(boolean opengate) {
-		this.opengate = opengate;
+		opengateLock.lock();
+		try {
+			this.opengate = opengate;
+		}
+		finally {
+			opengateLock.unlock();
+		}
 	}
 
-	public boolean permitPeople() throws InterruptedException { // слушаем контроллера если пришли люди
-		director.getDirectorLock().lock();
+	public boolean isOpengate () {
+		opengateLock.lock();
+		try {
+			if (opengate == true) {
+				return true;
+			}
+			return false;
+		}
+		finally {
+			opengateLock.unlock();
+		}
+	}
+	public boolean permitPeople() throws InterruptedException { // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+		controller.ControllerFlagLock.lock();
 		try 
 		{
-			if (controller.isFlag_of_entrance() == true ) //если контроллер разрешает нам войти 
+			if (controller.isFlag_of_entrance() == true ) //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 
 			{
-				entrance = true;
+				
 				return true;
 			}
 			
 		}
 		finally 
 		{
-			director.getDirectorLock().unlock();
+			controller.ControllerFlagLock.unlock();
 		}
-		entrance = false;
 		return false;
 	}
 	
 	public void takeVisitors () throws InterruptedException {	
-		director.getDirectorLock().lock();
+		//director.getDirectorLock().lock();
+	//	try {
+		peopleInMuseumLock.lock();
 		try {
-			if (permitPeople() == true  ) // если вход разрешен
+			if (permitPeople() == true  ) // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			{
 				int count = visitors.getCountVisitorsToMuseum();
 				
 				people_in_museum = people_in_museum + count;
 				visitors.setCountVisitorsToMuseum(0);
-			//	while (visitors.getCountVisitorsToMuseum()!= 0 ) {
-				//	people_in_museum++;
-				//	visitors.countVisitorsToMuseum--;
-				//}
-				System.out.println("Через EAST зашло - " + count + " людей");
-				System.out.println("Всего в музее людей - " + people_in_museum );
+		
+				System.out.println("Р§РµСЂРµР· EAST Р·Р°С€Р»Рѕ - " + count + " Р»СЋРґРµР№");
+				System.out.println("Р’СЃРµРіРѕ РІ РјСѓР·РµРµ Р»СЋРґРµР№ - " + people_in_museum );
 			}
 		}
 		finally {
-			director.getDirectorLock().unlock();
+			peopleInMuseumLock.unlock();
 		}
+
 		
 	}
 	
 	public void listenController () throws InterruptedException {
-		director.getDirectorLock().lock();
+		controller.ControllerFlagLock.lock();
 		try {
 			
 		if (controller.isFlag_of_entrance() == true )
-			System.out.println("Турникет EAST открыт(Контроллер)");
+			System.out.println("РўСѓСЂРЅРёРєРµС‚ EAST РѕС‚РєСЂС‹С‚(РєРѕРЅС‚СЂРѕР»Р»РµСЂ)");
 		else 
-			System.out.println("Турникет EAST закрыт(Контроллер)");
+			System.out.println("РўСѓСЂРЅРёРєРµС‚ EAST Р·Р°РєСЂС‹С‚(РєРѕРЅС‚СЂРѕР»Р»РµСЂ)");
 		}
 		finally {
-			director.getDirectorLock().unlock();
+			controller.ControllerFlagLock.unlock();
 		}
 	}
 	
@@ -104,36 +161,37 @@ public class PassEast implements Runnable {
 		// TODO Auto-generated method stub
 		while (true) 
 		{
-			director.getDirectorLock().lock();
-			try {
+			
+			if ( isOpengate() == true ) {
 				try {
-					director.getDirectorFunds().await();
+					listenController();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}	
-				if (flagOfTakeVisitors == true  ) 
+				}
+				opengateLock.lock();
+				try {
+					opengate = false;
+				}
+				finally {
+					opengateLock.unlock();
+				}
+			}
+			if ( WhoIsFlagOfTakeVisitors() == true ) {
 					try {
 						takeVisitors();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-				if(opengate == true ) {
+					}	
+					flagOfTakeVisitorsLock.lock();
 					try {
-						listenController();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						flagOfTakeVisitors = false;
 					}
-				}
-				flagOfTakeVisitors = false;
-				opengate = false;
+					finally {
+						flagOfTakeVisitorsLock.unlock();
+					}
 			}
-			finally {
-				director.getDirectorLock().unlock();
-			}
-			
 		}//endwhile
 	}
 		
