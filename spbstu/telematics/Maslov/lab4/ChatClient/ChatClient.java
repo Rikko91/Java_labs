@@ -200,7 +200,7 @@ public class ChatClient extends javax.swing.JFrame {
 
 	try {
 				s = new Socket(jTextIP.getText(), 45006);
-				sendObject = new SendObject("kakaxa", 1);
+				sendObject = new SendObject(null, 1);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
