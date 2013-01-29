@@ -1,10 +1,6 @@
 import java.io.Serializable;
 
-enum TypeOfMessage implements Serializable {
-	Text,
-	Disconnect;
-	
-}
+
 public class SendObject implements Serializable {
 	/**
 	 * 
@@ -12,7 +8,7 @@ public class SendObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String message;
 	private int type;
-	private TypeOfMessage typeMessage;
+
 	
 	public SendObject (String message, int type) {
 		this.message = message;
@@ -22,14 +18,6 @@ public class SendObject implements Serializable {
 
 	public String getMessage() {
 		return message;
-	}
-
-	public TypeOfMessage getTypeMessage() {
-		return typeMessage;
-	}
-
-	public void setTypeMessage(TypeOfMessage typeMessage) {
-		this.typeMessage = typeMessage;
 	}
 
 	public void setMessage(String message) {
